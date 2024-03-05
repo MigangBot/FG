@@ -9,18 +9,12 @@ from __future__ import (absolute_import, division, print_function,
 import jieba
 import jieba.posseg as pseg
 import codecs
-import os
+from pathlib import Path
 
 from Utils.ml.TextRank4ZH import util
 
-
-def get_default_stop_words_file():
-    d = os.path.dirname(os.path.realpath(__file__))
-    return os.path.join(d, '../../../cn/acmsmu/FG/data/stopwords.txt')
-
-def get_user_dict_file():
-    d = os.path.dirname(os.path.realpath(__file__))
-    return os.path.join(d, '../../../cn/acmsmu/FG/data/myDict.txt')
+STOP_WORD_PATH = Path(__file__).parent.parent.parent.parent/ "cn" / "acmsmu" / "FG" / "data" / "stopwords.txt"
+MYDICT_PATH = Path(__file__).parent.parent.parent.parent / "cn" / "acmsmu" / "FG" / "data" / "myDict.txt"
 
 class WordSegmentation(object):
     """ 分词 """
@@ -36,9 +30,7 @@ class WordSegmentation(object):
 
         self.default_speech_tag_filter = allow_speech_tags
         self.stop_words = set()
-        self.stop_words_file = get_default_stop_words_file()
-        if type(stop_words_file) is str:
-            self.stop_words_file = stop_words_file
+        self.stop_words_file = STOP_WORD_PATH
         for word in codecs.open(self.stop_words_file, 'r', 'utf-8', 'ignore'):
             self.stop_words.add(word.strip())
     
@@ -51,7 +43,7 @@ class WordSegmentation(object):
         use_speech_tags_filter -- 是否基于词性进行过滤。若为True，则使用self.default_speech_tag_filter过滤。否则，不过滤。    
         """
         text = util.as_text(text)
-        jieba.load_userdict(get_user_dict_file())
+        jieba.load_userdict(str(MYDICT_PATH))
         jieba_result = pseg.cut(text)
         
         if use_speech_tags_filter == True:

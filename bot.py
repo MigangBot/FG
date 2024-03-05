@@ -5,15 +5,12 @@
 @修改记录:
 '''
 import os
-from Utils.JsonUtils import JsonUtils
 import nonebot
-import config
 
 if __name__ == '__main__':
-    configuration = JsonUtils.json2Dict(os.path.join(os.getcwd(), 'cn', 'acmsmu', 'FG', 'data', 'config.json'))
-    nonebot.init(config)
+    nonebot.init()
     nonebot.load_plugins(
         os.path.join(os.path.dirname(__file__), 'cn', 'acmsmu'),
         'cn.acmsmu'
     )
-    nonebot.run(host=configuration['nonebotHost'], port=configuration['nonebotPort'])
+    nonebot.run(host="0.0.0.0", port=1206)

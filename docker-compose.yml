@@ -1,0 +1,11 @@
+version: "3.8"
+services:
+    FG:
+        restart: unless-stopped
+        image: ghcr.io/lambdayh/fg:latest
+        environment:
+            TZ: Asia/Shanghai
+        volumes:
+            - ./data:/app/cn/acmsmu/FG/data
+        ports:
+            - 127.0.0.1:1207:1206

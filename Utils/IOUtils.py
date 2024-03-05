@@ -10,7 +10,10 @@ import os
 import hashlib
 import zipfile
 import pickle
+from nonebot.log import logger
 from Utils.ConversionUtils import ConversionUtils
+import aiofiles
+from urllib.parse import unquote, urlparse
 
 class IOUtils:
     #获取文件大小(MB)
@@ -121,20 +124,19 @@ class IOUtils:
     #将对象序列化进pkl文件
     def serializeObj2Pkl(obj,path):
         try:
-            pickle_file = open(path,'wb')
+            with open(path,'wb') as f:
+                pickle.dump(obj,f)
         except FileNotFoundError as reason:
-            print('错误！路径不存在！')
-        pickle.dump(obj,pickle_file)
-        pickle_file.close()
+            logger.error(f'错误！路径不存在！{reason}')
 
     #将pkl反序列化至对象
     def deserializeObjFromPkl(path):
         try:
-            pickle_file = open(path,'rb')
+            with open(path,'rb') as f:
+                obj = pickle.load(f)
+                return obj
         except FileNotFoundError as reason:
-            print('错误！找不到文件！')
-        obj = pickle.load(pickle_file)
-        return obj
+            logger.error(f'错误！找不到文件！{reason}')
 
     #根据路径批量删除文件或目录
     def deleteFiles(fileList):
@@ -187,3 +189,7 @@ class IOUtils:
             os.mkdir(path)
         except:
             raise FileExistsError
+        
+    async def local_to_bytes(path) -> bytes:
+        async with aiofiles.open(path, "rb") as f:
+            return await f.read()
