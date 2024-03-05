@@ -2,7 +2,7 @@ version: "3.8"
 services:
     FG:
         restart: unless-stopped
-        image: ghcr.io/migangBot/fg:latest
+        image: ghcr.io/migangbot/fg:latest
         environment:
             TZ: Asia/Shanghai
         volumes:
