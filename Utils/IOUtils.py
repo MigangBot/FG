@@ -133,8 +133,7 @@ class IOUtils:
     def deserializeObjFromPkl(path):
         try:
             with open(path,'rb') as f:
-                obj = pickle.load(f)
-                return obj
+                return pickle.load(f)
         except FileNotFoundError as reason:
             logger.error(f'错误！找不到文件！{reason}')
 

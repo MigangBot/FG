@@ -21,10 +21,12 @@ for each in groupInfo:
     fpath: Path = GROUP_DATA_PATH / each['groupId']
     fpath.mkdir(parents=True, exist_ok=True)
     try:
-        dataDict = dict()
-        dataDict['flag'] = True
-        dataDict['file'] = 'chatA.txt'
-        IOUtils.serializeObj2Pkl(dataDict, fpath / 'var.pkl')
+        data_path = fpath / 'var.pkl'
+        if not data_path.exists():
+            dataDict = dict()
+            dataDict['flag'] = True
+            dataDict['file'] = 'chatA.txt'
+            IOUtils.serializeObj2Pkl(dataDict, fpath / 'var.pkl')
     except FileExistsError as e:
         logger.error(f"写入Pickel出错了，{e}")
         continue

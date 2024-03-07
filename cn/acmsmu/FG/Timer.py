@@ -13,23 +13,25 @@ from Utils.IOUtils import IOUtils
 from .pathSetting import GROUP_DATA_PATH, CONFIG_FILE
 
 
-async def handleTimer(timerName, groupId):
+async def handleTimer(groupId):
     dataDict = IOUtils.deserializeObjFromPkl(GROUP_DATA_PATH / groupId / "var.pkl")
     flag = dataDict["flag"]
+    # print(timerName+'的每日总结为\n'+report)
     clu = DailyConclusion.DailyConlusion(groupId)
     report = await clu.generateReport()
-    # print(timerName+'的每日总结为\n'+report)
-    await bot.send_group_msg(group_id=int(groupId), message=report)
-    if flag:
-        dataDict["flag"] = False
-        dataDict["file"] = "chatB.txt"
-        IOUtils.serializeObj2Pkl(dataDict, GROUP_DATA_PATH / groupId / "var.pkl")
-        IOUtils.deleteFile(GROUP_DATA_PATH / groupId / "chatA.txt")
-    else:
-        dataDict["flag"] = True
-        dataDict["file"] = "chatA.txt"
-        IOUtils.serializeObj2Pkl(dataDict, GROUP_DATA_PATH / groupId / "var.pkl")
-        IOUtils.deleteFile(GROUP_DATA_PATH / groupId / "chatB.txt")
+    try:
+        await bot.send_group_msg(group_id=int(groupId), message=report)
+    finally:
+        if flag:
+            dataDict["flag"] = False
+            dataDict["file"] = "chatB.txt"
+            IOUtils.serializeObj2Pkl(dataDict, GROUP_DATA_PATH / groupId / "var.pkl")
+            IOUtils.deleteFile(GROUP_DATA_PATH / groupId / "chatA.txt")
+        else:
+            dataDict["flag"] = True
+            dataDict["file"] = "chatA.txt"
+            IOUtils.serializeObj2Pkl(dataDict, GROUP_DATA_PATH / groupId / "var.pkl")
+            IOUtils.deleteFile(GROUP_DATA_PATH / groupId / "chatB.txt")
 
 
 bot = nonebot.get_bot()
@@ -44,6 +46,6 @@ for each in groupInfo:
         "cron",
         hour=hour,
         minute=minutes,
-        args=[each["timer"], each["groupId"]],
+        args=[each["groupId"]],
     )
     print("定时器" + each["timer"] + "定时任务添加成功!")
